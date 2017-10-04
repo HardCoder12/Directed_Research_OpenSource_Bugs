@@ -2594,18 +2594,18 @@ public class FileUtils {
         }
         long size = 0;
         for (final File file : files) {
+        	size = size+sizeOf(file);
+        	boolean isSymLink;
             try {
-                if (!isSymlink(file)) {
-                    size += sizeOf0(file); // internal method
-                    if (size < 0) {
-                        break;
-                    }
-                }
+            	isSymLink = isSymlink(file);
             } catch (final IOException ioe) {
                 // Ignore exceptions caught when asking if a File is a symlink.
+            	isSymLink = true;
+            }
+            if(!isSymLink) {
+            	size = size+sizeOf(file);
             }
         }
-
         return size;
     }
 

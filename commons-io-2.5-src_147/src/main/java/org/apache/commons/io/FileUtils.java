@@ -2373,6 +2373,10 @@ public class FileUtils {
         if (file.isDirectory()) {
             deleteDirectory(file);
         } else {
+            
+        	if(!file.exists()) {
+        		throw new FileNotFoundException("File does not exist: " + file);
+        	}
             final boolean filePresent = file.exists();
             if (!file.delete()) {
                 if (!filePresent) {

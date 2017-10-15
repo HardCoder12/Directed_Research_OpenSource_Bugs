@@ -19,16 +19,48 @@ package org.apache.hadoop.hdfs;
 
 import java.io.*;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.hdfs.protocol.ClientProtocol;
+import org.apache.hadoop.hdfs.protocol.HdfsConstants.SafeModeAction;
+import org.apache.hadoop.io.IOUtils;
 
 public class TestLease extends junit.framework.TestCase {
+    
+  private static Log LOG = LogFactory.getLog(TestLease.class);
+    
   static boolean hasLease(MiniDFSCluster cluster, Path src) {
     return cluster.getNamesystem().leaseManager.getLeaseByPath(src.toString()) != null;
   }
   
   final Path dir = new Path("/test/lease/");
+    
+  @Test
+   public void testSaveNamespaceWithRenamedLease() throws Exception {
+     MiniDFSCluster cluster = new MiniDFSCluster.Builder(new Configuration())
+       .numDataNodes(1)
+       .build();
+     cluster.waitActive();
+     DistributedFileSystem fs = (DistributedFileSystem) cluster.getFileSystem();
+     OutputStream out = null;
+     try {
+       fs.mkdirs(new Path("/test-target"));
+       out = fs.create(new Path("/test-source/foo")); // don't close
+       fs.rename(new Path("/test-source/"), new Path("/test-target/"));
+       
+       fs.setSafeMode(SafeModeAction.SAFEMODE_ENTER);
+       cluster.getNameNodeRpc().saveNamespace();
+       fs.setSafeMode(SafeModeAction.SAFEMODE_LEAVE);
+     } finally {
+       IOUtils.cleanup(LOG, out, fs);
+       if (cluster != null) {
+         cluster.shutdown();
+       }
+     }
+   }    
 
   public void testLease() throws Exception {
     Configuration conf = new Configuration();

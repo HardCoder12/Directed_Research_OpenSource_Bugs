@@ -163,16 +163,13 @@ class FSDirectory implements Closeable {
       newNode = addNode(path, newNode, -1, false);
     }
     if (newNode == null) {
-      NameNode.stateChangeLog.info("DIR* FSDirectory.addFile: "
-                                   +"failed to add "+path
-                                   +" to the file system");
-      return null;
+       NameNode.stateChangeLog.info("DIR* addFile: " + "failed to add " + path);
+       return null;
     }
     // add create file record to log, record new generation stamp
     fsImage.getEditLog().logOpenFile(path, newNode);
 
-    NameNode.stateChangeLog.debug("DIR* FSDirectory.addFile: "
-                                  +path+" is added to the file system");
+    NameNode.stateChangeLog.debug("DIR* addFile: " + path + " is added");
     return newNode;
   }
 
@@ -278,7 +275,7 @@ class FSDirectory implements Closeable {
 
       NameNode.stateChangeLog.debug("DIR* FSDirectory.addFile: "
                                     + path + " with " + block
-                                    + " block is added to the in-memory "
+                                    + " is added to the in-memory "
                                     + "file system");
     }
     return block;
@@ -294,7 +291,7 @@ class FSDirectory implements Closeable {
       fsImage.getEditLog().logOpenFile(path, file);
       NameNode.stateChangeLog.debug("DIR* FSDirectory.persistBlocks: "
                                     +path+" with "+ file.getBlocks().length 
-                                    +" blocks is persisted to the file system");
+                                     +" blocks is persisted");
     }
   }
 
@@ -309,7 +306,7 @@ class FSDirectory implements Closeable {
       if (NameNode.stateChangeLog.isDebugEnabled()) {
         NameNode.stateChangeLog.debug("DIR* FSDirectory.closeFile: "
                                     +path+" with "+ file.getBlocks().length 
-                                    +" blocks is persisted to the file system");
+                                     +" blocks is persisted");
       }
     }
   }
@@ -331,8 +328,7 @@ class FSDirectory implements Closeable {
       // write modified block locations to log
       fsImage.getEditLog().logOpenFile(path, fileNode);
       NameNode.stateChangeLog.debug("DIR* FSDirectory.addFile: "
-                                    +path+" with "+block
-                                    +" block is added to the file system");
+        + path + " with "+ block +" is added to the");
     }
     return true;
   }

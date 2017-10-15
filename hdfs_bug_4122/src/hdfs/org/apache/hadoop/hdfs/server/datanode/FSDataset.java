@@ -564,7 +564,7 @@ public class FSDataset implements FSConstants, FSDatasetInterface {
             // add this block to block set
             blockSet.add(block);
             if (DataNode.LOG.isDebugEnabled()) {
-              DataNode.LOG.debug("recoverBlocksBeingWritten for block " + block);
+              DataNode.LOG.debug("recoverBlocksBeingWritten for " + block);
             }
           }
         }
@@ -767,7 +767,7 @@ public class FSDataset implements FSConstants, FSDatasetInterface {
         volumes = fsvs; // replace array of volumes
       }
       Log.info("Completed FSVolumeSet.checkDirs. Removed=" + removed_size + 
-          "volumes. List of current volumes: " +   toString());
+          "volumes. Current volumes: " +   toString());
       
       return removed_vols;
     }
@@ -1446,7 +1446,7 @@ public class FSDataset implements FSConstants, FSDatasetInterface {
         volumeMap.put(b, new DatanodeBlockInfo(v, f));
       } else {
         // reopening block for appending to it.
-        DataNode.LOG.info("Reopen Block for append " + b);
+        DataNode.LOG.info("Reopen for append " + b);
         v = volumeMap.get(b).getVolume();
         f = createTmpFile(v, b, replicationRequest);
         File blkfile = getBlockFile(b);
@@ -1456,7 +1456,7 @@ public class FSDataset implements FSConstants, FSDatasetInterface {
         // rename meta file to tmp directory
         DataNode.LOG.debug("Renaming " + oldmeta + " to " + newmeta);
         if (!oldmeta.renameTo(newmeta)) {
-          throw new IOException("Block " + b + " reopen failed. " +
+          throw new IOException(b + " reopen failed. " +
                                 " Unable to move meta file  " + oldmeta +
                                 " to tmp dir " + newmeta);
         }
@@ -1465,18 +1465,18 @@ public class FSDataset implements FSConstants, FSDatasetInterface {
         DataNode.LOG.debug("Renaming " + blkfile + " to " + f);
         if (!blkfile.renameTo(f)) {
           if (!f.delete()) {
-            throw new IOException("Block " + b + " reopen failed. " +
+            throw new IOException(b + " reopen failed. " +
                                   " Unable to remove file " + f);
           }
           if (!blkfile.renameTo(f)) {
-            throw new IOException("Block " + b + " reopen failed. " +
+            throw new IOException(b + " reopen failed. " +
                                   " Unable to move block file " + blkfile +
                                   " to tmp dir " + f);
           }
         }
       }
       if (f == null) {
-        DataNode.LOG.warn("Block " + b + " reopen failed " +
+        DataNode.LOG.warn(b + " reopen failed " +
                           " Unable to locate tmp file.");
         throw new IOException("Block " + b + " reopen failed " +
                               " Unable to locate tmp file.");
@@ -1718,10 +1718,10 @@ public class FSDataset implements FSConstants, FSDatasetInterface {
       long st = System.currentTimeMillis();
       // broken out to a static method to simplify testing
       reconcileRoughBlockScan(seenOnDisk, volumeMap, ongoingCreates);
-      DataNode.LOG.info(
-          "Reconciled asynchronous block report against current state in " +
-          (System.currentTimeMillis() - st) + " ms");
-      
+      if (DataNode.LOG.isDebugEnabled()) {
+          DataNode.LOG.debug("Reconciled block report with current state in "
+                              + (System.currentTimeMillis() - st) + "ms");
+      }
       blockReport = seenOnDisk.keySet();
     }
 
@@ -2224,7 +2224,6 @@ public class FSDataset implements FSConstants, FSDatasetInterface {
           waitForReportRequest();
           assert requested && scan == null;
           
-          DataNode.LOG.info("Starting asynchronous block report scan");
           long st = System.currentTimeMillis();
           HashMap<Block, File> result = fsd.roughBlockScan();
           DataNode.LOG.info("Finished asynchronous block report scan in "

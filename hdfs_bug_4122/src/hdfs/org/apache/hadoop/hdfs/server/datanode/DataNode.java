@@ -379,7 +379,7 @@ public class DataNode extends Service
       blockScanner = new DataBlockScanner(this, (FSDataset)data, conf);
     } else {
       LOG.info("Periodic Block Verification is disabled because " +
-               reason + ".");
+               reason);
     }
 
     //create a servlet to serve full-file content
@@ -767,7 +767,6 @@ public class DataNode extends Service
                                                        xmitsInProgress,
                                                        getXceiverCount());
           myMetrics.heartbeats.inc(now() - startTime);
-          //LOG.info("Just sent heartbeat, with name " + localName);
           if (!processCommand(cmds))
             continue;
         }
@@ -843,7 +842,7 @@ public class DataNode extends Service
         // start block scanner
         if (blockScanner != null && blockScannerThread == null &&
             upgradeManager.isUpgradeCompleted()) {
-          LOG.info("Starting Periodic block scanner.");
+          LOG.info("Starting Periodic block scanner");
           blockScannerThread = new Daemon(blockScanner);
           blockScannerThread.start();
         }
@@ -987,7 +986,7 @@ public class DataNode extends Service
                               ) throws IOException {
     if (!data.isValidBlock(block)) {
       // block does not exist or is under-construction
-      String errStr = "Can't send invalid block " + block;
+      String errStr = "Can't send invalid " + block;
       LOG.info(errStr);
       namenode.errorReport(dnRegistration, 
                            DatanodeProtocol.INVALID_BLOCK, 
@@ -1002,7 +1001,7 @@ public class DataNode extends Service
       namenode.reportBadBlocks(new LocatedBlock[]{
           new LocatedBlock(block, new DatanodeInfo[] {
               new DatanodeInfo(dnRegistration)})});
-      LOG.info("Can't replicate block " + block
+      LOG.info("Can't replicate " + block
           + " because on-disk length " + onDiskLength 
           + " is shorter than NameNode recorded length " + block.getNumBytes());
       return;
@@ -1016,7 +1015,7 @@ public class DataNode extends Service
           xfersBuilder.append(xferTargets[i].getName());
           xfersBuilder.append(" ");
         }
-        LOG.info(dnRegistration + " Starting thread to transfer block " + 
+        LOG.info(dnRegistration + " Starting thread to transfer " + 
                  block + " to " + xfersBuilder);                       
       }
 
@@ -1031,7 +1030,7 @@ public class DataNode extends Service
       try {
         transferBlock(blocks[i], xferTargets[i]);
       } catch (IOException ie) {
-        LOG.warn("Failed to transfer block " + blocks[i], ie);
+        LOG.warn("Failed to transfer " + blocks[i], ie);
       }
     }
   }
@@ -1213,7 +1212,7 @@ public class DataNode extends Service
         blockSender.sendBlock(out, baseStream, null);
 
         // no response necessary
-        LOG.info(dnRegistration + ":Transmitted block " + b + " to " + curTarget);
+        LOG.info(dnRegistration + ":Transmitted " + b + " to " + curTarget);
 
       } catch (IOException ie) {
         LOG.warn(dnRegistration + ":Failed to transfer " + b + " to " + targets[0].getName()
@@ -1509,9 +1508,9 @@ public class DataNode extends Service
       data.finalizeBlock(newblock);
       myMetrics.blocksWritten.inc(); 
       notifyNamenodeReceivedBlock(newblock, EMPTY_DEL_HINT);
-      LOG.info("Received block " + newblock +
+      LOG.info("Received " + newblock +
                 " of size " + newblock.getNumBytes() +
-                " as part of lease recovery.");
+                " as part of lease recovery");
     }
   }
 
@@ -1556,7 +1555,7 @@ public class DataNode extends Service
       Block tmp = new Block();
       tmp.set(block.getBlockId(), block.getNumBytes(), GenerationStamp.WILDCARD_STAMP);
       if (ongoingRecovery.get(tmp) != null) {
-        String msg = "Block " + block + " is already being recovered, " +
+        String msg = block + " is already being recovered, " +
                      " ignoring this request to recover it.";
         LOG.info(msg);
         throw new IOException(msg);

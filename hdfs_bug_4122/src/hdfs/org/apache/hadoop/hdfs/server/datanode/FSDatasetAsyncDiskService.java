@@ -131,7 +131,7 @@ class FSDatasetAsyncDiskService {
       // clear the executor map so that calling execute again will fail.
       executors = null;
       
-      LOG.info("All async disk service threads have been shut down.");
+      LOG.info("All async disk service threads have been shut down");
     }
   }
 
@@ -141,7 +141,7 @@ class FSDatasetAsyncDiskService {
    */
   void deleteAsync(FSDataset.FSVolume volume, File blockFile,
       File metaFile, long dfsBytes, String blockName) {
-    DataNode.LOG.info("Scheduling block " + blockName + " file " + blockFile
+    DataNode.LOG.info("Scheduling " + blockName + " file " + blockFile
         + " for deletion");
     ReplicaFileDeleteTask deletionTask = 
         new ReplicaFileDeleteTask(volume, blockFile, metaFile, dfsBytes,
@@ -176,18 +176,18 @@ class FSDatasetAsyncDiskService {
     @Override
     public String toString() {
       // Called in AsyncDiskService.execute for displaying error messages.
-      return "deletion of block " + blockName + " with block file " + blockFile
+      return "deletion of " + blockName + " with block file " + blockFile
           + " and meta file " + metaFile + " from volume " + volume;
     }
 
     @Override
     public void run() {
       if ( !blockFile.delete() || ( !metaFile.delete() && metaFile.exists() ) ) {
-        DataNode.LOG.warn("Unexpected error trying to delete block "
+        DataNode.LOG.warn("Unexpected error trying to delete "
             + blockName + " at file " + blockFile + ". Ignored.");
       } else {
         volume.decDfsUsed(dfsBytes);
-        DataNode.LOG.info("Deleted block " + blockName + " at file " + blockFile);
+        DataNode.LOG.info("Deleted " + blockName + " at file " + blockFile);
       }
     }
   };

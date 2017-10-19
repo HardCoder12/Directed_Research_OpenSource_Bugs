@@ -44,13 +44,13 @@ fi
 
 # use POSTIX interface, symlink is followed automatically
 ZOOBIN="${BASH_SOURCE-$0}"
-ZOOBIN=`dirname "${ZOOBIN}"`
-ZOOBINDIR=`cd ${ZOOBIN}; pwd`
+ZOOBIN="$(dirname "${ZOOBIN}")"
+ZOOBINDIR="$(cd "${ZOOBIN}"; pwd)"
 
 if [ -e "$ZOOBIN/../libexec/zkEnv.sh" ]; then
-  . "$ZOOBINDIR"/../libexec/zkEnv.sh
+  . "$ZOOBINDIR/../libexec/zkEnv.sh"
 else
-  . "$ZOOBINDIR"/zkEnv.sh
+  . "$ZOOBINDIR/zkEnv.sh"
 fi
 
 if [ "x$SERVER_JVMFLAGS" != "x" ]
@@ -64,7 +64,7 @@ then
 fi
 
 # if we give a more complicated path to the config, don't screw around in $ZOOCFGDIR
-if [ "x`dirname \"$ZOOCFG\"`" != "x$ZOOCFGDIR" ]
+if [ "x$(dirname "$ZOOCFG")" != "x$ZOOCFGDIR" ]
 then
     ZOOCFG="$2"
 fi
@@ -99,13 +99,14 @@ if [ -n "$ZOO_DATADIR_AUTOCREATE_DISABLE" ]; then
 fi
 
 if [ -z "$ZOOPIDFILE" ]; then
+    ZOO_DATADIR="$(grep "^[[:space:]]*dataDir" "$ZOOCFG" | sed -e 's/.*=//')"
     if [ ! -d "$ZOO_DATADIR" ]; then
         mkdir -p "$ZOO_DATADIR"
     fi
     ZOOPIDFILE="$ZOO_DATADIR/zookeeper_server.pid"
 else
     # ensure it exists, otw stop will fail
-    mkdir -p $(dirname "$ZOOPIDFILE")
+    mkdir -p "$(dirname "$ZOOPIDFILE")"
 fi
 
 if [ ! -w "$ZOO_LOG_DIR" ] ; then
@@ -117,13 +118,13 @@ _ZOO_DAEMON_OUT="$ZOO_LOG_DIR/zookeeper.out"
 case $1 in
 start)
     echo  -n "Starting zookeeper ... "
-   if [ -f $ZOOPIDFILE ]; then
-      if kill -0 `cat $ZOOPIDFILE` > /dev/null 2>&1; then
-        echo $command already running as process `cat $ZOOPIDFILE`. 
+   if [ -f "$ZOOPIDFILE" ]; then
+      if kill -0 `cat "$ZOOPIDFILE"` > /dev/null 2>&1; then
+         echo $command already running as process `cat "$ZOOPIDFILE"`. 
          exit 0
       fi
     fi
-    nohup $JAVA $ZOO_DATADIR_AUTOCREATE "-Dzookeeper.log.dir=${ZOO_LOG_DIR}" \
+    nohup "$JAVA" "-Dzookeeper.log.dir=${ZOO_LOG_DIR}" "-Dzookeeper.root.logger=${ZOO_LOG4J_PROP}" \
     "-Dzookeeper.root.logger=${ZOO_LOG4J_PROP}" \
     -cp "$CLASSPATH" $JVMFLAGS $ZOOMAIN "$ZOOCFG" > "$_ZOO_DAEMON_OUT" 2>&1 < /dev/null &
     if [ $? -eq 0 ]
@@ -142,16 +143,16 @@ start)
     fi
     ;;
 start-foreground)
-    ZOO_CMD="exec $JAVA"
+    ZOO_CMD=(exec "$JAVA")
     if [ "${ZOO_NOEXEC}" != "" ]; then
-      ZOO_CMD="$JAVA"
+      ZOO_CMD=("$JAVA") 
     fi
-   $ZOO_CMD $ZOO_DATADIR_AUTOCREATE "-Dzookeeper.log.dir=${ZOO_LOG_DIR}" \
+   "${ZOO_CMD[@]}" "-Dzookeeper.log.dir=${ZOO_LOG_DIR}" "-Dzookeeper.root.logger=${ZOO_LOG4J_PROP}" \
     "-Dzookeeper.root.logger=${ZOO_LOG4J_PROP}" \
     -cp "$CLASSPATH" $JVMFLAGS $ZOOMAIN "$ZOOCFG"
     ;;
 print-cmd)
-    echo "$JAVA $ZOO_DATADIR_AUTOCREATE -Dzookeeper.log.dir=\"${ZOO_LOG_DIR}\" -Dzookeeper.root.logger=\"${ZOO_LOG4J_PROP}\" -cp \"$CLASSPATH\" $JVMFLAGS $ZOOMAIN \"$ZOOCFG\" > \"$_ZOO_DAEMON_OUT\" 2>&1 < /dev/null"
+    echo "\"$JAVA\" -Dzookeeper.log.dir=\"${ZOO_LOG_DIR}\" -Dzookeeper.root.logger=\"${ZOO_LOG4J_PROP}\" -cp \"$CLASSPATH\" $JVMFLAGS $ZOOMAIN \"$ZOOCFG\" > \"$_ZOO_DAEMON_OUT\" 2>&1 < /dev/null"
     ;;
 stop)
     echo -n "Stopping zookeeper ... "
@@ -192,7 +193,7 @@ status)
        fi
     fi
     echo "Client port found: $clientPort"
-    STAT=`$JAVA "-Dzookeeper.log.dir=${ZOO_LOG_DIR}" "-Dzookeeper.root.logger=${ZOO_LOG4J_PROP}" \
+     STAT=`"$JAVA" "-Dzookeeper.log.dir=${ZOO_LOG_DIR}" "-Dzookeeper.root.logger=${ZOO_LOG4J_PROP}" \
              -cp "$CLASSPATH" $JVMFLAGS org.apache.zookeeper.client.FourLetterWordMain \
              $clientPortAddress $clientPort srvr 2> /dev/null    \
           | grep Mode`

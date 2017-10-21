@@ -59,6 +59,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.apache.zookeeper.data.Stat;
 
 public class LoadFromLogTest extends ZKTestCase implements  Watcher {
     private static String HOSTPORT = "127.0.0.1:" + PortAssignment.unique();
@@ -361,24 +362,9 @@ public class LoadFromLogTest extends ZKTestCase implements  Watcher {
 		f.startup(zks);
 		Assert.assertTrue("waiting for server being up ", ClientBase
 				.waitForServerUp(HOSTPORT, CONNECTION_TIMEOUT));
-        ZooKeeper zk = new ZooKeeper(HOSTPORT, CONNECTION_TIMEOUT, this);
+        ZooKeeper zk = getConnectedZkClient();
         
-        long start = System.currentTimeMillis();
-		while (!connected) {
-			long end = System.currentTimeMillis();
-			if (end - start > 5000) {
-				Assert.assertTrue("Could not connect with server in 5 seconds",
-						false);
-			}
-			try {
-				Thread.sleep(200);
-			} catch (Exception e) {
-				LOG.warn("Intrrupted");
-			}
-
-		}
-
-		// generate some transactions
+        // generate some transactions
 		String lastPath = null;
 		try {
 			zk.create("/invalidsnap", new byte[0], Ids.OPEN_ACL_UNSAFE,
@@ -418,20 +404,7 @@ public class LoadFromLogTest extends ZKTestCase implements  Watcher {
 		Assert.assertTrue("Restore failed expected zxid=" + eZxid + " found="
 				+ fZxid, fZxid == eZxid);
         
-        zk = new ZooKeeper(HOSTPORT, CONNECTION_TIMEOUT, this);
-		start = System.currentTimeMillis();
-		while (!connected) {
-			long end = System.currentTimeMillis();
-			if (end - start > 5000) {
-				Assert.assertTrue("Could not connect with server in 5 seconds",
-						false);
-			}
-			try {
-				Thread.sleep(200);
-			} catch (Exception e) {
-				LOG.warn("Intrrupted");
-			}
-        }
+        zk = getConnectedZkClient();
         
 		// Verify correctness of data and whether sequential znode creation
 		// proceeds correctly after this point
@@ -471,22 +444,7 @@ public class LoadFromLogTest extends ZKTestCase implements  Watcher {
         f.startup(zks);
         Assert.assertTrue("waiting for server being up ", ClientBase
                 .waitForServerUp(HOSTPORT, CONNECTION_TIMEOUT));
-        ZooKeeper zk = new ZooKeeper(HOSTPORT, CONNECTION_TIMEOUT, this);
-        long start = System.currentTimeMillis();
-         while (!connected) {
-             long end = System.currentTimeMillis();
-             if (end - start > 5000) {
-                 Assert.assertTrue("Could not connect with server in 5 seconds",
-                         false);
-             }
-             try {
-                 Thread.sleep(200);
-             } catch (Exception e) {
-                 LOG.warn("Intrrupted");
-             }
- 
-         }
-
+        ZooKeeper zk = getConnectedZkClient();
         // generate some transactions
         try {
             for (int i = 0; i < NUM_MESSAGES; i++) {
@@ -522,7 +480,71 @@ public class LoadFromLogTest extends ZKTestCase implements  Watcher {
         f.shutdown();
         zks.shutdown();
     }
-
+    
+    /**
+      * ZOOKEEPER-1573: test restoring a snapshot with deleted txns ahead of the
+      * snapshot file's zxid.
+      */
+     @Test
+     public void testReloadSnapshotWithMissingParent() throws Exception {
+         // setup a single server cluster
+         File tmpDir = ClientBase.createTmpDir();
+         ClientBase.setupTestEnv();
+         ZooKeeperServer zks = new ZooKeeperServer(tmpDir, tmpDir, 3000);
+         SyncRequestProcessor.setSnapCount(10000);
+         final int PORT = Integer.parseInt(HOSTPORT.split(":")[1]);
+         ServerCnxnFactory f = ServerCnxnFactory.createFactory(PORT, -1);
+         f.startup(zks);
+         Assert.assertTrue("waiting for server being up ",
+                 ClientBase.waitForServerUp(HOSTPORT, CONNECTION_TIMEOUT));
+         ZooKeeper zk = getConnectedZkClient();
+ 
+         // create transactions to create the snapshot with create/delete pattern
+         zk.create("/a", "".getBytes(), Ids.OPEN_ACL_UNSAFE,
+                 CreateMode.PERSISTENT);
+         Stat stat = zk.exists("/a", false);
+         long createZxId = stat.getMzxid();
+         zk.create("/a/b", "".getBytes(), Ids.OPEN_ACL_UNSAFE,
+                 CreateMode.PERSISTENT);
+         zk.delete("/a/b", -1);
+         zk.delete("/a", -1);
+         // force the zxid to be behind the content
+         zks.getZKDatabase().setlastProcessedZxid(createZxId);
+         LOG.info("Set lastProcessedZxid to {}", zks.getZKDatabase()
+                 .getDataTreeLastProcessedZxid());
+         // Force snapshot and restore
+         zks.takeSnapshot();
+         zks.shutdown();
+         f.shutdown();
+ 
+         zks = new ZooKeeperServer(tmpDir, tmpDir, 3000);
+         SyncRequestProcessor.setSnapCount(10000);
+         f = ServerCnxnFactory.createFactory(PORT, -1);
+         f.startup(zks);
+         Assert.assertTrue("waiting for server being up ",
+                 ClientBase.waitForServerUp(HOSTPORT, CONNECTION_TIMEOUT));
+         f.shutdown();
+     }
+ 
+     private ZooKeeper getConnectedZkClient() throws IOException {
+         ZooKeeper zk = new ZooKeeper(HOSTPORT, CONNECTION_TIMEOUT, this);
+ 
+         long start = System.currentTimeMillis();
+         while (!connected) {
+             long end = System.currentTimeMillis();
+             if (end - start > 5000) {
+                 Assert.assertTrue("Could not connect with server in 5 seconds",
+                         false);
+             }
+             try {
+                 Thread.sleep(200);
+             } catch (Exception e) {
+                 LOG.warn("Interrupted");
+             }
+         }
+         return zk;
+     }
+    
     /**
      * Verify snap/log dir create with/without autocreate enabled.
      */

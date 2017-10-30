@@ -42,6 +42,7 @@ import org.apache.cxf.helpers.FileUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
+import com.cloud.ucs.structure.UcsCookie;
 import com.cloud.dc.ClusterDetailsDao;
 import com.cloud.dc.DataCenterVO;
 import com.cloud.dc.dao.ClusterDao;
@@ -70,6 +71,9 @@ import com.cloud.utils.xmlobject.XmlObjectParser;
 @Local(value = { UcsManager.class })
 public class UcsManagerImpl implements UcsManager {
     public static final Logger s_logger = Logger.getLogger(UcsManagerImpl.class);
+    public static final Long COOKIE_TTL = TimeUnit.MILLISECONDS.convert(100L, TimeUnit.MINUTES);
+    public static final Long COOKIE_REFRESH_TTL = TimeUnit.MILLISECONDS.convert(10L, TimeUnit.MINUTES);
+
 
     @Inject
     private UcsManagerDao ucsDao;
@@ -87,7 +91,7 @@ public class UcsManagerImpl implements UcsManager {
     @Inject
     private DataCenterDao dcDao;
 
-    private Map<Long, String> cookies = new HashMap<Long, String>();
+    private final Map<Long, UcsCookie> cookies = new HashMap<Long, UcsCookie>();
     private String name;
     private int runLevel;
     private Map<String, Object> params;
@@ -154,16 +158,32 @@ public class UcsManagerImpl implements UcsManager {
 
     private String getCookie(Long ucsMgrId) {
         try {
-        	String cookie = cookies.get(ucsMgrId);
-            if (cookie == null) {
-                UcsManagerVO mgrvo = ucsDao.findById(ucsMgrId);
-                UcsHttpClient client = new UcsHttpClient(mgrvo.getUrl());
-                String login = UcsCommands.loginCmd(mgrvo.getUsername(), mgrvo.getPassword());
-                String ret = client.call(login);
-                XmlObject xo = XmlObjectParser.parseFromString(ret);
-                cookie = xo.get("outCookie");
-                cookies.put(ucsMgrId, cookie);
+        	UcsCookie ucsCookie = cookies.get(ucsMgrId);
+            long currentTime = System.currentTimeMillis();
+            UcsManagerVO mgrvo = ucsDao.findById(ucsMgrId);
+            UcsHttpClient client = new UcsHttpClient(mgrvo.getUrl());
+            String cmd = null;
+            if (ucsCookie == null) {
+                cmd = UcsCommands.loginCmd(mgrvo.getUsername(), mgrvo.getPassword());
             }
+            else {
+                String cookie = ucsCookie.getCookie();
+                long cookieStartTime = ucsCookie.getStartTime();
+                if(currentTime - cookieStartTime > COOKIE_TTL) {
+                    cmd = UcsCommands.loginCmd(mgrvo.getUsername(), mgrvo.getPassword());
+                }
+                else if(currentTime - cookieStartTime > COOKIE_REFRESH_TTL) {
+                    cmd = UcsCommands.refreshCmd(mgrvo.getUsername(), mgrvo.getPassword(), cookie);
+                }
+            }
+            if(!(cmd == null)) {
+                String ret = client.call(cmd);
+                XmlObject xo = XmlObjectParser.parseFromString(ret);
+                String cookie = xo.get("outCookie");
+                ucsCookie = new UcsCookie(cookie, currentTime);
+                cookies.put(ucsMgrId, ucsCookie);
+            }
+            return ucsCookie.getCookie();
 
             return cookie;
         } catch (Exception e) {

@@ -1,0 +1,156 @@
+#Licensed to the Apache Software Foundation (ASF) under one
+#or more contributor license agreements.  See the NOTICE file
+#distributed with this work for additional information
+#regarding copyright ownership.  The ASF licenses this file
+#to you under the Apache License, Version 2.0 (the
+#"License"); you may not use this file except in compliance
+#with the License.  You may obtain a copy of the License at
+#http://www.apache.org/licenses/LICENSE-2.0
+#Unless required by applicable law or agreed to in writing,
+#software distributed under the License is distributed on an
+#"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+#KIND, either express or implied.  See the License for the
+#specific language governing permissions and limitations
+#under the License.
+# 
+# Translators:
+# Isaac Chiang <isaacchiang@gmail.com>, 2013.
+msgid ""
+msgstr ""
+"Project-Id-Version: Apache CloudStack Docs\n"
+"POT-Creation-Date: 2013-04-12T11:19:37\n"
+"PO-Revision-Date: 2013-03-22 01:47+0000\n"
+"Last-Translator: isaac.chiang <isaacchiang@gmail.com>\n"
+"Language-Team: None\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: zh_TW\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. Tag: title
+#, no-c-format
+msgid "Adding Tiers"
+msgstr "新增層級"
+
+#. Tag: para
+#, no-c-format
+msgid ""
+"Tiers are distinct locations within a VPC that act as isolated networks, "
+"which do not have access to other tiers by default. Tiers are set up on "
+"different VLANs that can communicate with each other by using a virtual "
+"router. Tiers provide inexpensive, low latency network connectivity to other"
+" tiers within the VPC."
+msgstr "Tier在VPC中是個獨立的網路區域，預設上是不能存取其他tier的。藉由虛擬路由器，Tier可以架設在VLAN上與其他溝通，Tier提供一個便宜且低延遲的VPC內部網路"
+
+#. Tag: para
+#, no-c-format
+msgid "Log in to the &PRODUCT; UI as an administrator or end user."
+msgstr "以管理者或終端使用者登入&PRODUCT; UI "
+
+#. Tag: para
+#, no-c-format
+msgid "In the left navigation, choose Network."
+msgstr "在左邊的導覽視窗，選擇Network"
+
+#. Tag: para
+#, no-c-format
+msgid "In the Select view, select VPC."
+msgstr "在Select視窗選擇VPC"
+
+#. Tag: para
+#, no-c-format
+msgid ""
+"All the VPC that you have created for the account is listed in the page."
+msgstr "帳戶所有創建的VPC會表列在本頁"
+
+#. Tag: para
+#, no-c-format
+msgid ""
+"The end users can see their own VPCs, while root and domain admin can see "
+"any VPC they are authorized to see."
+msgstr "終端使用者可以看見自己的VPC，而root和主要管理者可以看見所有被授權的VPC"
+
+#. Tag: para
+#, no-c-format
+msgid ""
+"Click the Configure button of the VPC for which you want to set up tiers."
+msgstr "對想要設置層級的VPC按下\"Configure\""
+
+#. Tag: para
+#, no-c-format
+msgid "The Add new tier dialog is displayed, as follows:"
+msgstr "會顯示Add new tier 對話框如下："
+
+#. Tag: para
+#, no-c-format
+msgid ""
+"If you have already created tiers, the VPC diagram is displayed. Click "
+"Create Tier to add a new tier."
+msgstr "如果你已經建立tier，會顯示VPC的圖示，按下Create Tie來新增"
+
+#. Tag: para
+#, no-c-format
+msgid "Specify the following:"
+msgstr "具體說明以下："
+
+#. Tag: para
+#, no-c-format
+msgid "All the fields are mandatory."
+msgstr "所有的欄位都必須填寫。"
+
+#. Tag: para
+#, no-c-format
+msgid ""
+"<emphasis role=\"bold\">Name</emphasis>: A unique name for the tier you "
+"create."
+msgstr "<emphasis role=\"bold\">Name</emphasis>: 您建立的tier的名稱"
+
+#. Tag: para
+#, no-c-format
+msgid ""
+"<emphasis role=\"bold\">Network Offering</emphasis>: The following default "
+"network offerings are listed: "
+"DefaultIsolatedNetworkOfferingForVpcNetworksNoLB, "
+"DefaultIsolatedNetworkOfferingForVpcNetworks"
+msgstr "<emphasis role=\"bold\">Network Offering</emphasis>: 列出以下預設的網路服務：DefaultIsolatedNetworkOfferingForVpcNetworksNoLB, DefaultIsolatedNetworkOfferingForVpcNetworks"
+
+#. Tag: para
+#, no-c-format
+msgid ""
+"In a VPC, only one tier can be created by using LB-enabled network offering."
+msgstr "在VPC，只有用LB-enabled network offering才能建立一個tier"
+
+#. Tag: para
+#, no-c-format
+msgid ""
+"<emphasis role=\"bold\">Gateway</emphasis>: The gateway for the tier you "
+"create. Ensure that the gateway is within the Super CIDR range that you "
+"specified while creating the VPC, and is not overlapped with the CIDR of any"
+" existing tier within the VPC."
+msgstr "<emphasis role=\"bold\">Gateway</emphasis>:  您新增的tier用的閘道，請確定閘道在您建立VPC時指定的 Super CIDR範圍內，並且沒有與其他在VPC內的tier重疊CIDR"
+
+#. Tag: para
+#, no-c-format
+msgid ""
+"<emphasis role=\"bold\">Netmask</emphasis>: The netmask for the tier you "
+"create."
+msgstr "<emphasis role=\"bold\">Netmask</emphasis>:  您新增的tier用的網路遮罩"
+
+#. Tag: para
+#, no-c-format
+msgid ""
+"For example, if the VPC CIDR is 10.0.0.0/16 and the network tier CIDR is "
+"10.0.1.0/24, the gateway of the tier is 10.0.1.1, and the netmask of the "
+"tier is 255.255.255.0."
+msgstr "例如，如果VPC的CIDR是10.0.0.0/16，而新的tier的CIDR是10.0.1.0/24，閘道為10.0.1.1，遮罩為255.255.255.0"
+
+#. Tag: para
+#, no-c-format
+msgid "Click OK."
+msgstr "按OK"
+
+#. Tag: para
+#, no-c-format
+msgid "Continue with configuring access control list for the tier."
+msgstr "繼續設定tier的access control list"

@@ -1,0 +1,172 @@
+#Licensed to the Apache Software Foundation (ASF) under one
+#or more contributor license agreements.  See the NOTICE file
+#distributed with this work for additional information
+#regarding copyright ownership.  The ASF licenses this file
+#to you under the Apache License, Version 2.0 (the
+#"License"); you may not use this file except in compliance
+#with the License.  You may obtain a copy of the License at
+#http://www.apache.org/licenses/LICENSE-2.0
+#Unless required by applicable law or agreed to in writing,
+#software distributed under the License is distributed on an
+#"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+#KIND, either express or implied.  See the License for the
+#specific language governing permissions and limitations
+#under the License.
+# 
+# Translators:
+# Isaac Chiang <isaacchiang@gmail.com>, 2013.
+msgid ""
+msgstr ""
+"Project-Id-Version: Apache CloudStack Docs\n"
+"POT-Creation-Date: 2013-04-12T11:19:39\n"
+"PO-Revision-Date: 2013-04-04 07:27+0000\n"
+"Last-Translator: isaac.chiang <isaacchiang@gmail.com>\n"
+"Language-Team: None\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: zh_TW\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. Tag: title
+#, no-c-format
+msgid "Configure the Security Policies"
+msgstr "設定 Security Policies "
+
+#. Tag: para
+#, no-c-format
+msgid ""
+"&PRODUCT; does various things which can be blocked by security mechanisms "
+"like AppArmor and SELinux. These have to be disabled to ensure the Agent has"
+" all the required permissions."
+msgstr "&PRODUCT;可以被安全機制阻擋，像是AppArmor及 SELinux，停用安全機制以便Agent可以正常運作"
+
+#. Tag: para
+#, no-c-format
+msgid "Configure SELinux (RHEL and CentOS)"
+msgstr "設定SELinux (RHEL 及 CentOS)："
+
+#. Tag: para
+#, no-c-format
+msgid ""
+"Check to see whether SELinux is installed on your machine. If not, you can "
+"skip this section."
+msgstr "檢查您的機器是否有SELinux，沒有的話請跳過這一章"
+
+#. Tag: para
+#, no-c-format
+msgid ""
+"In RHEL or CentOS, SELinux is installed and enabled by default. You can "
+"verify this with:"
+msgstr "對於RHEL 或 CentOS，SELinux是預設啟動的，您可以用以下來驗證："
+
+#. Tag: programlisting
+#, no-c-format
+msgid "<command>$ rpm -qa | grep selinux</command>"
+msgstr "<command>$ rpm -qa | grep selinux</command>"
+
+#. Tag: para
+#, no-c-format
+msgid ""
+"Set the SELINUX variable in <filename>/etc/selinux/config</filename> to "
+"\"permissive\". This ensures that the permissive setting will be maintained "
+"after a system reboot."
+msgstr "在<filename>/etc/selinux/config</filename>SELINUX變數設為\"permissive\"，此舉會使設定在重新開機後維持不變"
+
+#. Tag: para
+#, no-c-format
+msgid "In RHEL or CentOS:"
+msgstr "於RHEL/CentOS"
+
+#. Tag: programlisting
+#, no-c-format
+msgid "vi /etc/selinux/config"
+msgstr "vi /etc/selinux/config"
+
+#. Tag: para
+#, no-c-format
+msgid "Change the following line"
+msgstr "改變以下幾行"
+
+#. Tag: programlisting
+#, no-c-format
+msgid "SELINUX=enforcing"
+msgstr "SELINUX=enforcing"
+
+#. Tag: para
+#, no-c-format
+msgid "to this"
+msgstr "為"
+
+#. Tag: programlisting
+#, no-c-format
+msgid "SELINUX=permissive"
+msgstr "SELINUX=permissive"
+
+#. Tag: para
+#, no-c-format
+msgid ""
+"Then set SELinux to permissive starting immediately, without requiring a "
+"system reboot."
+msgstr "將SELinux設為允許立即啟動，不用重新開機"
+
+#. Tag: programlisting
+#, no-c-format
+msgid "<command>$ setenforce permissive</command>"
+msgstr "<command>$ setenforce permissive</command>"
+
+#. Tag: para
+#, no-c-format
+msgid "Configure Apparmor (Ubuntu)"
+msgstr "設定 Apparmor (Ubuntu) "
+
+#. Tag: para
+#, no-c-format
+msgid ""
+"Check to see whether AppArmor is installed on your machine. If not, you can "
+"skip this section."
+msgstr "檢查您的機器是否有AppArmor，沒有的話請跳過這一章"
+
+#. Tag: para
+#, no-c-format
+msgid ""
+"In Ubuntu AppArmor is installed and enabled by default. You can verify this "
+"with:"
+msgstr "對於Ubuntu，AppArmor是預設啟動的，您可以用以下來驗證："
+
+#. Tag: programlisting
+#, no-c-format
+msgid "<command>$ dpkg --list 'apparmor'</command>"
+msgstr "<command>$ dpkg --list 'apparmor'</command>"
+
+#. Tag: para
+#, no-c-format
+msgid "Disable the AppArmor profiles for libvirt"
+msgstr "為 libvirt停用AppArmor profiles "
+
+#. Tag: programlisting
+#, no-c-format
+msgid ""
+"<command>$ ln -s /etc/apparmor.d/usr.sbin.libvirtd "
+"/etc/apparmor.d/disable/</command>"
+msgstr "<command>$ ln -s /etc/apparmor.d/usr.sbin.libvirtd /etc/apparmor.d/disable/</command>"
+
+#. Tag: programlisting
+#, no-c-format
+msgid ""
+"<command>$ ln -s /etc/apparmor.d/usr.lib.libvirt.virt-aa-helper "
+"/etc/apparmor.d/disable/</command>"
+msgstr "<command>$ ln -s /etc/apparmor.d/usr.lib.libvirt.virt-aa-helper /etc/apparmor.d/disable/</command>"
+
+#. Tag: programlisting
+#, no-c-format
+msgid ""
+"<command>$ apparmor_parser -R /etc/apparmor.d/usr.sbin.libvirtd</command>"
+msgstr "<command>$ apparmor_parser -R /etc/apparmor.d/usr.sbin.libvirtd</command>"
+
+#. Tag: programlisting
+#, no-c-format
+msgid ""
+"<command>$ apparmor_parser -R /etc/apparmor.d/usr.lib.libvirt.virt-aa-"
+"helper</command>"
+msgstr "<command>$ apparmor_parser -R /etc/apparmor.d/usr.lib.libvirt.virt-aa-helper</command>"

@@ -1,0 +1,117 @@
+#Licensed to the Apache Software Foundation (ASF) under one
+#or more contributor license agreements.  See the NOTICE file
+#distributed with this work for additional information
+#regarding copyright ownership.  The ASF licenses this file
+#to you under the Apache License, Version 2.0 (the
+#"License"); you may not use this file except in compliance
+#with the License.  You may obtain a copy of the License at
+#http://www.apache.org/licenses/LICENSE-2.0
+#Unless required by applicable law or agreed to in writing,
+#software distributed under the License is distributed on an
+#"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+#KIND, either express or implied.  See the License for the
+#specific language governing permissions and limitations
+#under the License.
+# 
+# Translators:
+# Isaac Chiang <isaacchiang@gmail.com>, 2013.
+msgid ""
+msgstr ""
+"Project-Id-Version: Apache CloudStack Docs\n"
+"POT-Creation-Date: 2013-04-12T11:19:38\n"
+"PO-Revision-Date: 2013-04-12 11:36+0000\n"
+"Last-Translator: sebgoa <runseb@gmail.com>\n"
+"Language-Team: None\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: zh_TW\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. Tag: title
+#, no-c-format
+msgid "Configuring VPN"
+msgstr "設定VPN"
+
+#. Tag: para
+#, no-c-format
+msgid "To set up VPN for the cloud:"
+msgstr "為雲端設定VPN"
+
+#. Tag: para
+#, no-c-format
+msgid "Log in to the &PRODUCT; UI as an administrator or end user."
+msgstr "以管理者或終端使用者登入&PRODUCT; UI "
+
+#. Tag: para
+#, no-c-format
+msgid "In the left navigation, click Global Settings."
+msgstr "在左邊的導覽視窗，選擇Global Settings"
+
+#. Tag: para
+#, no-c-format
+msgid "Set the following global configuration parameters."
+msgstr "設定以下全域設定參數"
+
+#. Tag: para
+#, no-c-format
+msgid ""
+"remote.access.vpn.client.ip.range – The range of IP addresses to be "
+"allocated to remote access VPN clients. The first IP in the range is used by"
+" the VPN server."
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "remote.access.vpn.psk.length – Length of the IPSec key."
+msgstr "remote.access.vpn.psk.length，IPSec key的長度"
+
+#. Tag: para
+#, no-c-format
+msgid ""
+"remote.access.vpn.user.limit – Maximum number of VPN users per account."
+msgstr "remote.access.vpn.user.limit，每個帳戶最多的VPN使用者"
+
+#. Tag: para
+#, no-c-format
+msgid "To enable VPN for a particular network:"
+msgstr "想要開啟VPN給特定網路"
+
+#. Tag: para
+#, no-c-format
+msgid "Log in as a user or administrator to the &PRODUCT; UI."
+msgstr "以使用者或管理者登入"
+
+#. Tag: para
+#, no-c-format
+msgid "In the left navigation, click Network."
+msgstr "在左邊的導覽視窗，選擇Network"
+
+#. Tag: para
+#, no-c-format
+msgid "Click the name of the network you want to work with."
+msgstr "選擇你想要套用的網路"
+
+#. Tag: para
+#, no-c-format
+msgid "Click View IP Addresses."
+msgstr "按 View IP Addresses."
+
+#. Tag: para
+#, no-c-format
+msgid "Click one of the displayed IP address names."
+msgstr "選擇其中一個顯示出來的IP位址"
+
+#. Tag: para
+#, no-c-format
+msgid ""
+"Click the Enable VPN button. <inlinemediaobject> <imageobject> <imagedata "
+"fileref=\"./images/vpn-icon.png\" /> </imageobject> <textobject> "
+"<phrase>AttachDiskButton.png: button to attach a volume</phrase> "
+"</textobject> </inlinemediaobject>"
+msgstr "按Enable VPN"
+
+#. Tag: para
+#, no-c-format
+msgid "The IPsec key is displayed in a popup window."
+msgstr "IPsec key會顯示在彈跳視窗"

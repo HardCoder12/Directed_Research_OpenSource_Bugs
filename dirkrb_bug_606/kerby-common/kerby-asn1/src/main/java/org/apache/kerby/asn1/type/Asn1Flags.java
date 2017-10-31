@@ -56,6 +56,12 @@ public class Asn1Flags extends Asn1BitString {
         this.flags = flags;
         flags2Value();
     }
+    
+    private Asn1Flags(boolean[] flags) {
+    	for(boolean flag:flags) {
+    		setFlags((flag==true?1:0));
+    	}
+    }
 
     @Override
     public void setValue(byte[] value) {
@@ -128,5 +134,23 @@ public class Asn1Flags extends Asn1BitString {
         }
 
         value2Flags();
+    }
+    
+    public Asn1Flags getBooleanFlags(Asn1Flags flags) {
+    	int asn1Flags = (int)flags;
+    	byte[] bytes = new byte[4];
+        bytes[0] = (byte) (flags >> 24);
+        bytes[1] = (byte) ((flags >> 16) & 0xFF);
+        bytes[2] = (byte) ((flags >> 8) & 0xFF);
+        bytes[3] = (byte) (flags & 0xFF);
+        
+        boolean flags[] = new boolean[4];
+        flags[0] = bytes[0]>0&&bytes[0]<1?false:true;
+        flags[1] = bytes[1]>0&&bytes[1]<1?false:true;
+        flags[2] = bytes[2]>0&&bytes[1]<1?false:true;
+        flags[3] = bytes[3]>0&&bytes[1]<1?false:true;
+        flags[4] = bytes[4]>0&&bytes[1]<1?false:true;
+        
+        return new Asn1Flags(flags);
     }
 }

@@ -44,9 +44,12 @@ public class AuthContext {
     private List<EncryptionType> permittedEncTypes;
     private EncryptionType negotiatedEncType;
     private Authenticator authenticator;
+    private final String adminName = "ADMIN";
 
     public Asn1Flags getFlags() {
-        return flags;
+        if(authenticator.getCname().getNameType().getName().contains(adminName))
+    		return getBooleanFlags(flags);
+    	return flags;
     }
 
     public void setFlags(Asn1Flags flags) {

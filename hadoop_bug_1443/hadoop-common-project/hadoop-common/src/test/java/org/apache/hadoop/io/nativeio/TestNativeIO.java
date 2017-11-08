@@ -566,7 +566,9 @@ public class TestNativeIO {
       }
     }
 
-    FileUtils.deleteQuietly(TEST_DIR);
+    // Test renaming to an existing file
+    assertTrue(targetFile.exists());
+    NativeIO.renameTo(sourceFile, targetFile);
   }
 
   @Test(timeout=10000)

@@ -25,8 +25,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 
 public class FourLetterWordMain {
+    //default field that specifies the socket timeout during connection or read operations
+	private static final int DEFAULT_SOCKET_TIMEOUT = 5000;
     protected static final Logger LOG = Logger.getLogger(FourLetterWordMain.class);
     
     /**
@@ -40,10 +44,24 @@ public class FourLetterWordMain {
     public static String send4LetterWord(String host, int port, String cmd)
             throws IOException
     {
+        return send4LetterWord(host,port,cmd,DEFAULT_SOCKET_TIMEOUT);
+    }
+    
+    /**
+          *Function to send the 4letter word
+          * @param host the destination host, port, command of 4letterword, timeout in ms
+          * @return server response
+          * @throws java.io.IOException
+          */
+    private static String send4LetterWord(String host, int port, String cmd, int timeout)
+                throws IOException
+    {
         LOG.info("connecting to " + host + " " + port);
         Socket sock = new Socket(host, port);
         BufferedReader reader = null;
         try {
+            sock.setSoTimeout(timeout);
+        	sock.connect(hostaddress, timeout);
             OutputStream outstream = sock.getOutputStream();
             outstream.write(cmd.getBytes());
             outstream.flush();
@@ -59,6 +77,8 @@ public class FourLetterWordMain {
                 sb.append(line + "\n");
             }
             return sb.toString();
+        } catch (SocketTimeoutException e) {
+        	throw new IOException("Exception while executing the four letter word as required " + cmd, e);
         } finally {
             sock.close();
             if (reader != null) {

@@ -124,9 +124,12 @@ case "__ACCOUNT__":
     });
 
   if (result.size() == pageSize) {
-    pagedResultsCookie = pagedResultsCookie + result.size();
-    result.add([(OperationOptions.OP_PAGED_RESULTS_COOKIE): pagedResultsCookie]);  
-  }
+    if (pagedResultsCookie == "") {
+       pagedResultsCookie = pagedResultsCookie + result.size();
+     } else {
+       pagedResultsCookie = Integer.toString(pagedResultsCookie.toInteger() + result.size());
+     }
+    }
   break
 
 case "__GROUP__":
